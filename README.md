@@ -13,4 +13,4 @@ npm start
 
 1. 目前完成图片canvas识别位置
 
-![./screencapture.png](识别截图)
+![识别截图](screencapture.png)
