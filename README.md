@@ -6,7 +6,7 @@
 ```bash
 npm i 
 npm start
-// open localhost:300
+// open localhost:300/demo 查看识别效果
 ```
 
 ## 进展

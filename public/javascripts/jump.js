@@ -51,7 +51,7 @@ function getCurCenter(data, width, height) {
     }
     pos[0] = Math.floor((maxX + minX) / 2);
     pos[1] = maxY;
-    console.log(`player position (x, y)= (${pos[0]}, ${pos[1]})`);
+    // console.log(`player position (x, y)= (${pos[0]}, ${pos[1]})`);
     return pos;
 }
 function getNextCenter(data, width, height, y = -1) {
@@ -114,7 +114,7 @@ function getNextCenter(data, width, height, y = -1) {
     }
     pos[1] = Math.floor((maxY + apex[4]) / 2);
     // console.log(points_top, points_left, points_right);
-    console.log(`next position center (x,y)=${pos[0]},${pos[1]}`);
+    // console.log(`next position center (x,y)=${pos[0]},${pos[1]}`);
     return pos;
 }
 async function getPosition(img) {
@@ -124,20 +124,3 @@ async function getPosition(img) {
     return {pos1, pos2};
 }
 
-function getPointHtml(top, left) {
-    return `<div class="point" style="top:${top}px;left:${left}px">`;
-}
-let html = '';
-for (let i = 1; i <= 12; i++) {
-    let url = `/images/demos/${i}.png`;
-    html += `<li><img src="${url}" id="img${i}"/></li>`;
-    getPosition(url).then(({pos1, pos2}) => {
-        let {top, left} = $(`#img${i}`).position();
-        let $curPoint = $(getPointHtml(top + pos1[1] - 5, left + pos1[0] - 5));
-        $curPoint.appendTo($('body'));
-
-        let $nextPoint = $(getPointHtml(top + pos2[1] - 5, left + pos2[0] - 5));
-        $nextPoint.appendTo($('body'));
-    });
-}
-$('#list').html(html);
