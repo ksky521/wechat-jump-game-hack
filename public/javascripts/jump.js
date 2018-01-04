@@ -11,7 +11,7 @@ function getImageData(src) {
             let imgData = ctx.getImageData(0, 0, width, height);
             resolve(imgData);
         };
-        img.onerror = e => {
+        img.onerror = (e) => {
             img.onerror = img.onload = null;
             reject(e);
         };
@@ -19,14 +19,7 @@ function getImageData(src) {
     });
 }
 function tolerenceHelper(r, g, b, rt, gt, bt, t) {
-    return (
-        r > rt - t &&
-        r < rt + t &&
-        g > gt - t &&
-        g < gt + t &&
-        b > bt - t &&
-        b < bt + t
-    );
+    return r > rt - t && r < rt + t && g > gt - t && g < gt + t && b > bt - t && b < bt + t;
 }
 
 function getCurCenter(data, width, height) {
@@ -49,10 +42,7 @@ function getCurCenter(data, width, height) {
             let r = data[i];
             let g = data[i + 1];
             let b = data[i + 2];
-            if (
-                y > pos[1] &&
-                tolerenceHelper(r, g, b, playerR, playerG, playerB, 16)
-            ) {
+            if (y > pos[1] && tolerenceHelper(r, g, b, playerR, playerG, playerB, 16)) {
                 minX = Math.min(minX, x);
                 maxX = Math.max(maxX, x);
                 maxY = Math.max(maxY, y);
@@ -90,32 +80,12 @@ function getNextCenter(data, width, height, y = -1) {
             // 不是默认背景颜色
             if (!tolerenceHelper(rt, gt, bt, r, g, b, 30)) {
                 if (apex.length === 0) {
-                    if (
-                        !tolerenceHelper(
-                            data[i + 4],
-                            data[i + 5],
-                            data[i + 6],
-                            r,
-                            g,
-                            b,
-                            30
-                        )
-                    ) {
+                    if (!tolerenceHelper(data[i + 4], data[i + 5], data[i + 6], r, g, b, 30)) {
                         //椭圆形找中心，往后找30个像素点
                         let len = 2;
                         while (len++ !== 30) {
                             i += len * 4;
-                            if (
-                                tolerenceHelper(
-                                    data[i + 4],
-                                    data[i + 5],
-                                    data[i + 6],
-                                    r,
-                                    g,
-                                    b,
-                                    30
-                                )
-                            ) {
+                            if (tolerenceHelper(data[i + 4], data[i + 5], data[i + 6], r, g, b, 30)) {
                                 break;
                             }
                         }
@@ -127,9 +97,7 @@ function getNextCenter(data, width, height, y = -1) {
                     // 减少循环范围
                     endX = x;
                     break;
-                } else if (
-                    tolerenceHelper(rt, gt, bt, apex[0], apex[1], apex[2], 5)
-                ) {
+                } else if (tolerenceHelper(rt, gt, bt, apex[0], apex[1], apex[2], 5)) {
                     //存在顶点了，则根据颜色值开始匹配
                     maxY = Math.max(maxY, y);
                     find = x;
@@ -150,25 +118,25 @@ function getNextCenter(data, width, height, y = -1) {
     return pos;
 }
 async function getPosition(img) {
-    let { data, width, height } = await getImageData(img);
+    let {data, width, height} = await getImageData(img);
     let pos1 = getCurCenter(data, width, height);
     let pos2 = getNextCenter(data, width, height, pos1[1]);
-    return { pos1, pos2 };
+    return {pos1, pos2};
 }
 
-function getPointHtml(top, left){
-    return `<div class="point" style="top:${top}px;left:${left}px">`
+function getPointHtml(top, left) {
+    return `<div class="point" style="top:${top}px;left:${left}px">`;
 }
 let html = '';
 for (let i = 1; i <= 12; i++) {
     let url = `/images/demos/${i}.png`;
     html += `<li><img src="${url}" id="img${i}"/></li>`;
-    getPosition(url).then(({ pos1, pos2 }) => {
+    getPosition(url).then(({pos1, pos2}) => {
         let {top, left} = $(`#img${i}`).position();
-        let $curPoint = $(getPointHtml(top + pos1[1] - 5, left+pos1[0] - 5));
+        let $curPoint = $(getPointHtml(top + pos1[1] - 5, left + pos1[0] - 5));
         $curPoint.appendTo($('body'));
-        
-        let $nextPoint = $(getPointHtml(top + pos2[1] - 5, left+pos2[0] - 5));
+
+        let $nextPoint = $(getPointHtml(top + pos2[1] - 5, left + pos2[0] - 5));
         $nextPoint.appendTo($('body'));
     });
 }
