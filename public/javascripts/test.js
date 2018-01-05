@@ -23,7 +23,7 @@ getPosition(testUrl).then(({pos1, pos2, data, width, height}) => {
     }
 
     ctx.putImageData(imgData, 0, 0);
-    $('#canvas').append(canvas);
+    $('#canvas').append(canvas)
 });
 
 function near(i, start, end, t) {
