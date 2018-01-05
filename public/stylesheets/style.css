@@ -15,6 +15,9 @@ a {
     align-items: center;
     justify-content: center;
 }
+li img{
+    width: 720px;
+}
 .point {
     background: red;
     width: 10px;
