@@ -56,7 +56,7 @@ function getCurCenter(data, width, height) {
     console.log(`player position (x, y)= (${pos[0]}, ${pos[1]})`);
     return pos;
 }
-function getNextCenter(data, width, height, y = -1) {
+function getNextCenter(data, width, height, CurX = 0, CurY = -1) {
     let startY = Math.floor(height / 4);
     let endY = Math.floor(height * 3 / 4);
 
@@ -69,12 +69,13 @@ function getNextCenter(data, width, height, y = -1) {
     let apex = [];
     let pos = [0, 0];
     // 保证从当前小人位置底部点往上
-    endY = Math.min(endY, y);
+    endY = Math.min(endY, CurY);
+    minX = curX > width/2 ? 0 : curX+20; // 从小人的右边开始逐行检测像素（这里的20是个大概的小人的宽度的一半），因为有可能小人会比下一个棋盘高
     let endX = width;
     let gapCount = 0;
     for (let y = startY; y < endY; y++) {
         let find = 0;
-        for (let x = 1; x < endX; x++) {
+        for (let x = minX; x < endX; x++) { 
             let i = y * (width * 4) + x * 4;
             let rt = data[i];
             let gt = data[i + 1];
@@ -122,6 +123,6 @@ function getNextCenter(data, width, height, y = -1) {
 async function getPosition(img) {
     let {data, width, height} = await getImageData(img);
     let pos1 = getCurCenter(data, width, height);
-    let pos2 = getNextCenter(data, width, height, pos1[1]);
+    let pos2 = getNextCenter(data, width, height, pos1[0], pos1[1]);
     return {pos1, pos2, data, width, height};
 }
