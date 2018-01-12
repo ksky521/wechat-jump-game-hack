@@ -31,6 +31,7 @@ function getCurCenter(data, width, height) {
     const playerB = 86;
 
     let minX = Infinity;
+    let minY = Infinity;
     let maxX = -1;
     let maxY = -1;
     // 找到小人当前的底部位置
@@ -48,15 +49,18 @@ function getCurCenter(data, width, height) {
                 minX = Math.min(minX, x);
                 maxX = Math.max(maxX, x);
                 maxY = Math.max(maxY, y);
+                minY = Math.min(minY, y);
             }
         }
     }
     pos[0] = Math.floor((maxX + minX) / 2);
     pos[1] = maxY;
+    pos[2] = [minX, maxX, minY, maxY];
+
     console.log(`player position (x, y)= (${pos[0]}, ${pos[1]})`);
     return pos;
 }
-function getNextCenter(data, width, height, y = -1) {
+function getNextCenter(data, width, height, curPos) {
     let startY = Math.floor(height / 4);
     let endY = Math.floor(height * 3 / 4);
 
@@ -69,12 +73,19 @@ function getNextCenter(data, width, height, y = -1) {
     let apex = [];
     let pos = [0, 0];
     // 保证从当前小人位置底部点往上
-    endY = Math.min(endY, y);
+    endY = Math.min(endY, curPos[1]);
     let endX = width;
     let gapCount = 0;
     for (let y = startY; y < endY; y++) {
         let find = 0;
         for (let x = 1; x < endX; x++) {
+            // 解决小人比下一个台阶高的情况，需要遇见在小人范围内的值就跳出
+            if (curPos[3] && curPos[3].length) {
+                let [x1, x2, y1, y2] = curPos[3];
+                if (x >= x1 && x <= x2 && y >= y1 && y <= y2) {
+                    continue;
+                }
+            }
             let i = y * (width * 4) + x * 4;
             let rt = data[i];
             let gt = data[i + 1];
@@ -122,6 +133,6 @@ function getNextCenter(data, width, height, y = -1) {
 async function getPosition(img) {
     let {data, width, height} = await getImageData(img);
     let pos1 = getCurCenter(data, width, height);
-    let pos2 = getNextCenter(data, width, height, pos1[1]);
+    let pos2 = getNextCenter(data, width, height, pos1);
     return {pos1, pos2, data, width, height};
 }
